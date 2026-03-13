@@ -1,0 +1,1001 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>多媒体作品集 | 视频&图片展示</title>
+    <style>
+        /* 全局样式重置 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Microsoft YaHei', 'Segoe UI', sans-serif;
+        }
+
+        /* 基础样式 */
+        body {
+            line-height: 1.6;
+            color: #333;
+            background-color: #f5f5f7;
+            scroll-behavior: smooth;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* 导航栏样式 */
+        nav {
+            background-color: #1a1a1a;
+            color: white;
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            transition: background-color 0.3s ease;
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #00a8ff;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+        }
+
+        .nav-links li {
+            margin-left: 2.5rem;
+        }
+
+        .nav-links a {
+            transition: color 0.3s ease;
+            position: relative;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: #00a8ff;
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: #00a8ff;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        /* 移动端菜单按钮 */
+        .menu-btn {
+            display: none;
+            font-size: 1.8rem;
+            cursor: pointer;
+            color: white;
+        }
+
+        /* 英雄区样式 */
+        .hero {
+            height: 85vh;
+            background: linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8)), 
+                        url('https://images.unsplash.com/photo-1519389950473-47ba0277781c?ixlib=rb-4.0.3&auto=format&fit=crop&w=1350&q=80');
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: white;
+            position: relative;
+        }
+
+        .hero-content {
+            max-width: 800px;
+            padding: 2rem;
+        }
+
+        .hero h1 {
+            font-size: 3.2rem;
+            margin-bottom: 1.5rem;
+            line-height: 1.2;
+        }
+
+        .hero h1 span {
+            color: #00a8ff;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 0.9rem 2.2rem;
+            background-color: #00a8ff;
+            color: white;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .btn:hover {
+            background-color: #0088cc;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,168,255,0.3);
+        }
+
+        /* 关于我部分 */
+        .about {
+            padding: 6rem 0;
+            background-color: white;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            color: #1a1a1a;
+            position: relative;
+            display: inline-block;
+            padding-bottom: 1rem;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 3px;
+            background-color: #00a8ff;
+        }
+
+        .section-desc {
+            color: #666;
+            max-width: 600px;
+            margin: 1rem auto 0;
+            font-size: 1.1rem;
+        }
+
+        .about-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            align-items: center;
+        }
+
+        .about-img {
+            position: relative;
+        }
+
+        .about-img img {
+            width: 100%;
+            max-width: 450px;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            z-index: 2;
+            position: relative;
+        }
+
+        .about-img::before {
+            content: '';
+            position: absolute;
+            top: -20px;
+            left: -20px;
+            width: 100%;
+            height: 100%;
+            background-color: #00a8ff;
+            opacity: 0.1;
+            border-radius: 10px;
+            z-index: 1;
+        }
+
+        .about-text h3 {
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            color: #333;
+        }
+
+        .about-text p {
+            margin-bottom: 1.2rem;
+            color: #666;
+            font-size: 1.05rem;
+            line-height: 1.8;
+        }
+
+        /* 作品集部分 - 混合视频和策划案 */
+        .portfolio {
+            padding: 6rem 0;
+            background-color: #f5f5f7;
+        }
+
+        /* 作品分类筛选 */
+        .portfolio-filter {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 3rem;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 0.7rem 1.5rem;
+            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+        }
+
+        .filter-btn.active {
+            background-color: #00a8ff;
+            color: white;
+            border-color: #00a8ff;
+        }
+
+        .filter-btn:hover:not(.active) {
+            border-color: #00a8ff;
+            color: #00a8ff;
+        }
+
+        /* 作品网格 */
+        .portfolio-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+            gap: 2rem;
+        }
+
+        .portfolio-item {
+            background-color: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+        }
+
+        .portfolio-item:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+        }
+
+        /* 视频容器样式 */
+        .video-container {
+            position: relative;
+            padding-top: 56.25%; /* 16:9 比例 */
+            overflow: hidden;
+            cursor: pointer; /* 增加鼠标指针样式 */
+        }
+
+        .video-container video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* 视频播放按钮覆盖层 */
+        .video-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 1;
+            transition: opacity 0.3s ease;
+            cursor: pointer;
+        }
+
+        .video-overlay i {
+            font-size: 4rem;
+            color: white;
+            transition: transform 0.3s ease;
+        }
+
+        .portfolio-item:hover .video-overlay i {
+            transform: scale(1.1);
+        }
+
+        /* 策划案作品样式（替换原图片作品） */
+        .plan-container {
+            width: 100%;
+            height: 240px;
+            overflow: hidden;
+            background-color: #f8f9fa;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .plan-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .portfolio-item:hover .plan-container img {
+            transform: scale(1.1);
+        }
+
+        /* 作品信息 */
+        .portfolio-info {
+            padding: 1.8rem;
+        }
+
+        .portfolio-category {
+            display: inline-block;
+            font-size: 0.9rem;
+            color: #00a8ff;
+            margin-bottom: 0.8rem;
+            font-weight: 500;
+        }
+
+        .portfolio-info h3 {
+            font-size: 1.4rem;
+            margin-bottom: 0.8rem;
+            color: #1a1a1a;
+        }
+
+        .portfolio-info p {
+            color: #666;
+            margin-bottom: 1.2rem;
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+
+        /* 技能部分（新增AIGC板块） */
+        .skills {
+            padding: 6rem 0;
+            background-color: white;
+        }
+
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .skill-item {
+            padding: 2.5rem 1.5rem;
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.03);
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .skill-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.08);
+        }
+
+        .skill-item i {
+            font-size: 3.5rem;
+            color: #00a8ff;
+            margin-bottom: 1.5rem;
+            display: inline-block;
+        }
+
+        .skill-item h3 {
+            font-size: 1.3rem;
+            margin-bottom: 0.8rem;
+            color: #333;
+        }
+
+        .skill-item p {
+            color: #666;
+            font-size: 1rem;
+        }
+
+        /* 页脚样式 */
+        footer {
+            background-color: #111;
+            color: #999;
+            padding: 3rem 0;
+            text-align: center;
+        }
+
+        .footer-content {
+            margin-bottom: 2rem;
+        }
+
+        .footer-content p {
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+        }
+
+        .copyright {
+            font-size: 0.9rem;
+            opacity: 0.7;
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 992px) {
+            .portfolio-grid {
+                grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            }
+            
+            .about-content {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+            
+            .about-img {
+                margin: 0 auto;
+            }
+        }
+
+        @media (max-width: 768px) {
+            /* 导航栏响应式 */
+            .menu-btn {
+                display: block;
+            }
+
+            .nav-links {
+                position: fixed;
+                top: 0;
+                right: 0;
+                height: 100vh;
+                width: 280px;
+                background-color: #1a1a1a;
+                flex-direction: column;
+                padding: 3rem 2rem;
+                transform: translateX(100%);
+                transition: transform 0.3s ease;
+                z-index: 101;
+                box-shadow: -5px 0 15px rgba(0,0,0,0.1);
+            }
+
+            .nav-links.show {
+                transform: translateX(0);
+            }
+
+            .nav-links li {
+                margin: 1.5rem 0;
+                margin-left: 0;
+            }
+
+            /* 英雄区响应式 */
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            /* 技能网格响应式 */
+            .skills-grid {
+                grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            }
+
+            /* 作品网格响应式 */
+            .portfolio-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .hero h1 {
+                font-size: 2rem;
+            }
+            
+            .section-title {
+                font-size: 2rem;
+            }
+            
+            .skill-item {
+                padding: 1.8rem 1rem;
+            }
+            
+            .skill-item i {
+                font-size: 2.8rem;
+            }
+        }
+    </style>
+    <!-- 引入图标库 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- 导航栏（已删除联系我） -->
+    <nav>
+        <div class="container nav-container">
+            <div class="logo">多媒体作品集</div>
+            <div class="menu-btn" id="menuBtn">
+                <i class="fas fa-bars"></i>
+            </div>
+            <ul class="nav-links" id="navLinks">
+                <li><a href="#home">首页</a></li>
+                <li><a href="#about">关于我</a></li>
+                <li><a href="#portfolio">作品集</a></li>
+                <li><a href="#skills">技能</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- 英雄区 -->
+    <section id="home" class="hero">
+        <div class="container hero-content">
+            <h1>创意<span>多媒体</span>设计师</h1>
+            <p>专注于视频创作与视觉设计，用镜头和画面讲述有温度的故事，打造沉浸式视觉体验</p>
+            <a href="#portfolio" class="btn">浏览我的作品</a>
+        </div>
+    </section>
+
+<!-- 关于我（移除图片，文字居中，添加色块装饰） -->
+<section id="about" class="about">
+    <div class="container">
+        <div class="section-header">
+            <h2 class="section-title">关于我</h2>
+            <p class="section-desc">用专业的技能和创意的视角，打造兼具美感与价值的视频作品</p>
+        </div>
+        <!-- 移除图片容器，重构文字区域布局 -->
+        <div class="about-content">
+            <div class="about-text-wrap">
+                <div class="about-text-card">
+                    <div class="about-text-icon">
+                        <i class="fas fa-camera-retro"></i>
+                    </div>
+                    <div class="about-text">
+                        <h3>全栈媒体设计</h3>
+                        <p>熟练掌握视频拍摄、剪辑、后期制作。曾参与多个品牌宣传视频及个人创作，具备扎实的专业功底与创作实战经验，对视觉呈现与创意表达有较强理解。</p>
+                        <p>基于品牌形象及诉求，撰写策划案，帮助客户提升品牌影响力和产品转化率。</p>
+                        <p>我的创作理念是：每一个作品都应该有自己的灵魂，无论是动态的视频还是静态的图片，都要能够传递出独特的情感和信息，与观众产生共鸣。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- 新增对应的CSS样式（添加到原<style>标签内） -->
+<style>
+    /* 原有样式保留，新增以下样式 */
+    .about-content {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 2rem 0;
+    }
+
+    .about-text-wrap {
+        width: 100%;
+        max-width: 800px; /* 控制文字区域最大宽度，避免过宽 */
+    }
+
+    .about-text-card {
+        background: linear-gradient(135deg, #f0f8ff 0%, #e6f7ff 100%); /* 渐变色块背景 */
+        border-radius: 16px;
+        padding: 3rem 2.5rem;
+        position: relative;
+        box-shadow: 0 8px 24px rgba(0, 168, 255, 0.1);
+        border: 1px solid rgba(0, 168, 255, 0.1);
+    }
+
+    /* 装饰性图标 */
+    .about-text-icon {
+        position: absolute;
+        top: -25px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 50px;
+        height: 50px;
+        background-color: #00a8ff;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 4px 12px rgba(0, 168, 255, 0.3);
+    }
+
+    .about-text-icon i {
+        font-size: 1.8rem;
+        color: white;
+    }
+
+    .about-text {
+        text-align: center; /* 文字居中 */
+        margin-top: 1rem; /* 避开装饰图标 */
+    }
+
+    .about-text h3 {
+        font-size: 2rem;
+        margin-bottom: 2rem;
+        color: #1a1a1a;
+        position: relative;
+        display: inline-block;
+        padding-bottom: 1rem;
+    }
+
+    .about-text h3::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 60px;
+        height: 3px;
+        background-color: #00a8ff;
+    }
+
+    .about-text p {
+        margin-bottom: 1.5rem;
+        color: #555;
+        font-size: 1.1rem;
+        line-height: 1.8;
+    }
+
+    /* 响应式适配 */
+    @media (max-width: 768px) {
+        .about-text-card {
+            padding: 2rem 1.5rem;
+        }
+
+        .about-text h3 {
+            font-size: 1.8rem;
+        }
+
+        .about-text p {
+            font-size: 1rem;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .about-text-card {
+            padding: 1.5rem 1rem;
+        }
+
+        .about-text h3 {
+            font-size: 1.6rem;
+        }
+    }
+</style>
+
+    <!-- 作品展示（更新策划案和视频作品） -->
+    <section id="portfolio" class="portfolio">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">我的作品</h2>
+                <p class="section-desc">融合视频与策划案的创意作品，展现多元的视觉表达</p>
+            </div>
+            
+            <!-- 作品分类筛选 -->
+            <div class="portfolio-filter">
+                <button class="filter-btn active" data-filter="all">全部作品</button>
+                <button class="filter-btn" data-filter="video">视频作品</button>
+                <button class="filter-btn" data-filter="plan">策划案作品</button>
+            </div>
+            
+            <!-- 作品网格 -->
+            <div class="portfolio-grid">
+                <!-- 视频作品1 - 对应微电影《镜中人》【修改：href替换为微信公众号链接】 -->
+                <div class="portfolio-item" data-category="video">
+                    <div class="video-container" onclick="window.open('https://www.xinpianchang.com/a13538230?from=webShare&channel=copyLink', '_blank')">
+                        <video poster="https://s41.ax1x.com/2026/03/13/peAJnM9.jpg">
+                            <source src="https://www.w3school.com.cn/i/movie.mp4" type="video/mp4">
+                            您的浏览器不支持HTML5视频播放
+                        </video>
+                        <div class="video-overlay">
+                            <i class="fas fa-play"></i>
+                        </div>
+                    </div>
+                    <div class="portfolio-info">
+                        <span class="portfolio-category">视频作品 | 微电影</span>
+                        <h3>微电影《镜中人》</h3>
+                        <p>心理题材微电影《镜中人》，展现现代都市人的内心挣扎与自我和解。</p>
+                        <a href="https://www.xinpianchang.com/a13538230?from=webShare&channel=copyLink" target="_blank" class="btn">查看详情</a>
+                    </div>
+                </div>
+
+                <!-- 策划案作品1 - 微电影《镜中人》 -->
+                <div class="portfolio-item" data-category="plan">
+                    <div class="plan-container">
+                        <img src="https://s41.ax1x.com/2026/03/13/peAJnM9.jpg">
+                    </div>
+                    <div class="portfolio-info">
+                        <span class="portfolio-category">策划案作品 | 微电影</span>
+                        <h3>微电影《镜中人》</h3>
+                        <p>《镜中人》微电影分镜脚本，包含场景描述、旁白注释、镜头运动、画面示意等核心内容，打造沉浸式心理题材作品。</p>
+                        <a href="https://www.kdocs.cn/l/cmGrGis0a0Mu" class="btn">查看详情</a>
+                    </div>
+                </div>
+
+                <!-- 视频作品2 - 对应联名活动《斑马X香山公园》【修改：href替换为微信公众号链接】 -->
+                <div class="portfolio-item" data-category="video">
+                    <div class="video-container" onclick="window.open('https://mp.weixin.qq.com/s/j7ZeMX8qVGZDCyrY0v3Jvw', '_blank')">
+                        <video poster="https://s41.ax1x.com/2026/03/13/peAYCSe.jpg">
+                            <source src="https://www.w3school.com.cn/i/movie.mp4" type="video/mp4">
+                            您的浏览器不支持HTML5视频播放
+                        </video>
+                        <div class="video-overlay">
+                            <i class="fas fa-play"></i>
+                        </div>
+                    </div>
+                    <div class="portfolio-info">
+                        <span class="portfolio-category">视频作品 | 活动宣传</span>
+                        <h3>联名活动《斑马X香山公园》</h3>
+                        <p>《斑马X香山公园》品牌联名活动宣传视频，展现活动主题与品牌调性，通过活动曝光度与参与度。</p>
+                        <a href="https://mp.weixin.qq.com/s/j7ZeMX8qVGZDCyrY0v3Jvw" target="_blank" class="btn">查看详情</a>
+                    </div>
+                </div>
+
+                <!-- 策划案作品2 - 联名活动《斑马X香山公园》 -->
+                <div class="portfolio-item" data-category="plan">
+                    <div class="plan-container">
+                        <img src="https://s41.ax1x.com/2026/03/13/peAYCSe.jpg">
+                    </div>
+                    <div class="portfolio-info">
+                        <span class="portfolio-category">策划案作品 | 联名活动</span>
+                        <h3>联名活动《斑马X香山公园》</h3>
+                        <p>《斑马X香山公园》品牌联名活动，包含活动流程与活动展示面等内容。</p>
+                        <a href="https://www.kdocs.cn/l/ckkb3uFx5W7C"btn">查看详情</a>
+                    </div>
+                </div>
+
+                <!-- 视频作品3 - 对应展会《2025服贸会》【修改：href替换为微信公众号链接】 -->
+                <div class="portfolio-item" data-category="video">
+                    <div class="video-container" onclick="window.open('https://mp.weixin.qq.com/s/L_ixKJKCqAgqjSZ458Sg9A', '_blank')">
+                        <video poster="https://s41.ax1x.com/2026/03/13/peAJexJ.jpg">
+                            <source src="https://www.w3school.com.cn/i/movie.mp4" type="video/mp4">
+                            您的浏览器不支持HTML5视频播放
+                        </video>
+                        <div class="video-overlay">
+                            <i class="fas fa-play"></i>
+                        </div>
+                    </div>
+                    <div class="portfolio-info">
+                        <span class="portfolio-category">视频作品 | 展会宣传</span>
+                        <h3>展会《2025服贸会》</h3>
+                        <p>2025服贸会官方宣传视频，通过展示展会规模、前端产品、活动热度等，提升品牌影响力。</p>
+                        <a href="https://mp.weixin.qq.com/s/L_ixKJKCqAgqjSZ458Sg9A" target="_blank" class="btn">查看详情</a>
+                    </div>
+                </div>
+
+                <!-- 策划案作品3 - 展会《2025服贸会》 -->
+                <div class="portfolio-item" data-category="plan">
+                    <div class="plan-container">
+                        <img src="https://s41.ax1x.com/2026/03/13/peAJexJ.jpg">
+                    </div>
+                    <div class="portfolio-info">
+                        <span class="portfolio-category">策划案作品 | 展会策划</span>
+                        <h3>展会《2025服贸会》</h3>
+                        <p>2025服贸会整体方案，包含传播文案、视频脚本等核心内容。</p>
+                        <a href="https://www.kdocs.cn/l/ccnyhccN3cF9" class="btn">查看详情</a>
+                    </div>
+                </div>
+
+                <!-- 视频作品4 - 对应品牌栏目《斑马看世界》【修改：href替换为微信公众号链接】 -->
+                <div class="portfolio-item" data-category="video">
+                    <div class="video-container" onclick="window.open('https://mp.weixin.qq.com/s/L_ixKJKCqAgqjSZ458Sg9A', '_blank')">
+                        <video poster="https://s41.ax1x.com/2026/03/13/peAJurR.jpg">
+                            <source src="https://www.w3school.com.cn/i/movie.mp4" type="video/mp4">
+                            您的浏览器不支持HTML5视频播放
+                        </video>
+                        <div class="video-overlay">
+                            <i class="fas fa-play"></i>
+                        </div>
+                    </div>
+                    <div class="portfolio-info">
+                        <span class="portfolio-category">视频作品 | 品牌栏目</span>
+                        <h3>品牌栏目《斑马看世界》</h3>
+                        <p>《斑马看世界》品牌栏目宣传片，通过打造具有辨识度的品牌IP内容，增强提高用户粘性。</p>
+                        <a href="https://mp.weixin.qq.com/s/L_ixKJKCqAgqjSZ458Sg9A" target="_blank" class="btn">查看详情</a>
+                    </div>
+                </div>
+
+                <!-- 策划案作品4 - 公益活动《斑马公益计划》 -->
+                <div class="portfolio-item" data-category="plan">
+                    <div class="plan-container">
+                        <img src="https://s41.ax1x.com/2026/03/13/peAYW1e.jpg">
+                    </div>
+                    <div class="portfolio-info">
+                        <span class="portfolio-category">策划案作品 | 公益活动</span>
+                        <h3>公益活动《斑马公益计划》</h3>
+                        <p>《斑马公益计划》全案策划，包含公益主题、视频风格、传播策略、视频脚本等完整内容。</p>
+                        <a href="https://www.kdocs.cn/l/ceN8aU1ABbpo" class="btn">查看详情</a>
+                    </div>
+                </div>
+
+                <!-- 策划案作品5 - 品牌栏目《斑马看世界》 -->
+                <div class="portfolio-item" data-category="plan">
+                    <div class="plan-container">
+                        <img src="https://s41.ax1x.com/2026/03/13/peAJurR.jpg">
+                    </div>
+                    <div class="portfolio-info">
+                        <span class="portfolio-category">策划案作品 | 品牌栏目</span>
+                        <h3>品牌栏目《斑马看世界》</h3>
+                        <p>《斑马看世界》品牌栏目策划方案，包含选题说明、拍摄信息、核心传播点、视频脚本等核心内容。</p>
+                        <a href="https://www.kdocs.cn/l/ci414vquYmza" class="btn">查看详情</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 技能展示（新增AIGC板块） -->
+    <section id="skills" class="skills">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">我的技能</h2>
+                <p class="section-desc">专业的技术能力，打造高品质的多媒体作品</p>
+            </div>
+            <div class="skills-grid">
+                <div class="skill-item">
+                    <i class="fas fa-video"></i>
+                    <h3>视频剪辑</h3>
+                    <p>Pr / 剪映/ 达芬奇</p>
+                </div>
+                <div class="skill-item">
+                    <i class="fas fa-film"></i>
+                    <h3>特效制作</h3>
+                    <p>Ae /  Blender</p>
+                </div>
+                <div class="skill-item">
+                    <i class="fas fa-camera"></i>
+                    <h3>摄影摄像</h3>
+                    <p>摄影 / 摄像/场景</p>
+                </div>
+                <div class="skill-item">
+                    <i class="fas fa-image"></i>
+                    <h3>图片处理</h3>
+                    <p>Ps / Lr / Capture One</p>
+                </div>
+                <div class="skill-item">
+                    <i class="fas fa-robot"></i>
+                    <h3>AIGC创作</h3>
+                    <p>影像 / 音频 / 代码</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 页脚 -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <p>多媒体作品集 | 用创意和技术打造视觉盛宴</p>
+            </div>
+            <div class="copyright">
+                <p>&copy; 2026 我的多媒体作品集 | 保留所有权利</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript 交互 -->
+    <script>
+        // 移动端菜单切换
+        const menuBtn = document.getElementById('menuBtn');
+        const navLinks = document.getElementById('navLinks');
+
+        menuBtn.addEventListener('click', () => {
+            navLinks.classList.toggle('show');
+            // 切换菜单图标
+            const icon = menuBtn.querySelector('i');
+            if (icon.classList.contains('fa-bars')) {
+                icon.classList.replace('fa-bars', 'fa-times');
+            } else {
+                icon.classList.replace('fa-times', 'fa-bars');
+            }
+        });
+
+        // 平滑滚动
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+
+                // 关闭移动端菜单
+                navLinks.classList.remove('show');
+                const icon = menuBtn.querySelector('i');
+                if (icon.classList.contains('fa-times')) {
+                    icon.classList.replace('fa-times', 'fa-bars');
+                }
+
+                // 滚动到目标位置
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+
+        // 滚动时导航栏样式变化
+        window.addEventListener('scroll', () => {
+            const nav = document.querySelector('nav');
+            if (window.scrollY > 50) {
+                nav.style.backgroundColor = '#111';
+            } else {
+                nav.style.backgroundColor = '#1a1a1a';
+            }
+        });
+
+        // 作品筛选功能
+        const filterBtns = document.querySelectorAll('.filter-btn');
+        const portfolioItems = document.querySelectorAll('.portfolio-item');
+
+        filterBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                // 移除所有按钮的active类
+                filterBtns.forEach(b => b.classList.remove('active'));
+                // 给当前按钮添加active类
+                btn.classList.add('active');
+
+                const filterValue = btn.getAttribute('data-filter');
+                
+                // 筛选作品
+                portfolioItems.forEach(item => {
+                    if (filterValue === 'all' || item.getAttribute('data-category') === filterValue) {
+                        item.style.display = 'block';
+                        // 添加淡入动画
+                        item.style.opacity = '0';
+                        setTimeout(() => {
+                            item.style.opacity = '1';
+                        }, 100);
+                    } else {
+                        item.style.display = 'none';
+                    }
+                });
+            });
+        });
+
+        // 视频播放交互（注释掉播放逻辑，保留跳转）
+        const videoOverlays = document.querySelectorAll('.video-overlay');
+        videoOverlays.forEach(overlay => {
+            overlay.addEventListener('click', (e) => {
+                // 阻止默认播放行为，优先跳转
+                e.preventDefault();
+                // 触发父容器的跳转事件
+                const videoContainer = overlay.parentElement;
+                videoContainer.click();
+            });
+
+            // 移除视频播放/暂停监听（如需保留播放功能可注释此行）
+            // const video = overlay.parentElement.querySelector('video');
+            // video.addEventListener('play', () => {
+            //     overlay.style.opacity = '0';
+            // });
+            // video.addEventListener('pause', () => {
+            //     overlay.style.opacity = '1';
+            // });
+        });
+
+        // 页面加载动画
+        window.addEventListener('load', () => {
+            document.body.classList.add('loaded');
+        });
+    </script>
+</body>
+</html>
